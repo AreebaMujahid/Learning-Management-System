@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { JwtService } from './jwt/jwt.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   providers: [JwtService]
