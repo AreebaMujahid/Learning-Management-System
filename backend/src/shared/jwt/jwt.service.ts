@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtTokenPayload } from 'src/utils/types/token.payload';
 import { JwtService as Jwt } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { User } from 'src/modules/users/schemas/user.schema';
+import { User } from 'src/modules/auth/schemas/user.schema';
 import { JwtTokenPurpose } from 'src/utils/enums/jwt-token-purpose';
 import { Role } from 'src/utils/enums/roles';
 @Injectable()

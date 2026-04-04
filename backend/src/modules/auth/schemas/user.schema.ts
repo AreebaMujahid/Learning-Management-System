@@ -22,6 +22,12 @@ export class User extends Document {
 
   @Prop()
   profilePicture?: string;
+
+  @Prop({ default: true })
+  isActive: boolean;
+
+  @Prop({ default: false })
+  isArchived: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
