@@ -10,8 +10,8 @@ import { map } from 'rxjs/operators';
 export interface Response<T> {
   success: boolean;
   statusCode: number;
-  message: string;
-  data: T;
+  message?: string;
+  data?: T;
 }
 
 @Injectable()
@@ -27,8 +27,8 @@ export class TransformInterceptor<T> implements NestInterceptor<T, Response<T>> 
       map((data) => ({
         success: true,
         statusCode: statusCode,
-        message: data.message,
-        data: data.result || data,
+        message: data?.message || 'Request successful', 
+        data: data,
       })),
     );
   }

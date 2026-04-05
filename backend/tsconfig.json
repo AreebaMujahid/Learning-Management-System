@@ -15,6 +15,9 @@
     "outDir": "./dist",
     "strictPropertyInitialization": false,
     "incremental": true,
+    "paths": {
+      "src/*": ["./src/*"]
+    },
     "skipLibCheck": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,

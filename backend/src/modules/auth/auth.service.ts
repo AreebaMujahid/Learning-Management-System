@@ -54,9 +54,7 @@ export class AuthService {
       const tokens = this.generateAuthTokens(savedUser);
       return tokens;
     } catch (error) {
-      if (error.code === 11000) {
-        throw new ConflictException('Email already exists');
-      }
+      throw(error)
     }
   }
   async login(loginDto: LoginUserDto) {
