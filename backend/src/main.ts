@@ -9,7 +9,12 @@ dns.setServers(['1.1.1.1', '8.8.8.8']);
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api/v1');
-  app.enableCors();
+  app.enableCors({
+    origin: 'http://localhost:5173', 
+    credentials: true,// for cookies
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  });
+
   app.useGlobalInterceptors(new TransformInterceptor());
   const config = new DocumentBuilder()
     .setTitle('LMS Backend API')

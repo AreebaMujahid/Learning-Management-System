@@ -4,7 +4,16 @@ import { Label } from "../ui/label";
 import { cn } from "../../lib/utils";
 import { GraduationCap } from "lucide-react"; // Hero icon for LMS
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useLogin } from "../../features/auth/hooks/user-login";
 export function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { mutate: login, isPending } = useLogin();
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    login({ email, password });
+  };
   return (
     <div className="container relative min-h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       {/* --- Left Side: Branding/Image (Visible only on Desktop) --- */}
@@ -41,17 +50,16 @@ export function LoginPage() {
 
           {/* Form Elements */}
           <div className={cn("grid gap-6")}>
-            <form onSubmit={(e) => e.preventDefault()}>
+            <form onSubmit={handleSubmit}>
               <div className="grid gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
-                    placeholder="name@example.com"
                     type="email"
-                    autoCapitalize="none"
-                    autoComplete="email"
-                    autoCorrect="off"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@example.com"
                     required
                   />
                 </div>
@@ -68,11 +76,15 @@ export function LoginPage() {
                   <Input
                     id="password"
                     type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     required
                   />
                 </div>
-                <Button className="mt-2">Sign In</Button>
+                <Button className="mt-2" type="submit" disabled={isPending}>
+                  {isPending ? "Logging in..." : "Sign In"}
+                </Button>
               </div>
             </form>
 
@@ -96,7 +108,7 @@ export function LoginPage() {
 
           {/* Footer Text */}
           <p className="px-8 text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?
+            Dont have an account?
             <Link
               to="/signup"
               className="underline underline-offset-4 hover:text-primary font-medium"
