@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-import { CourseCategory } from 'src/utils/enums/course-category';
+import { CourseCategory } from '../../../utils/enums/course-category';
 
 @Schema({ timestamps: true })
 export class Course extends Document {
