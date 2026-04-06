@@ -1,35 +1,32 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { v2 as cloudinary, UploadApiResponse, UploadApiErrorResponse } from 'cloudinary';
+import { Injectable } from '@nestjs/common';
+import { v2 as cloudinary } from 'cloudinary';
 
 @Injectable()
 export class CloudinaryService {
-  async uploadVideo(file: Express.Multer.File): Promise<any> {
+  async uploadVideo(file: Express.Multer.File) {
     return new Promise((resolve, reject) => {
-      const upload = cloudinary.uploader.upload_stream(
+      const uploadStream = cloudinary.uploader.upload_stream(
         {
           resource_type: 'video',
           folder: 'lms_videos',
+          eager: [
+            {
+              width: 300,
+              height: 200,
+              crop: 'pad',
+              format: 'jpg',
+              start_offset: '10',
+            },
+          ],
+          eager_async: false, // For testing, keep it false. For production, true is better.
         },
-        (error: UploadApiErrorResponse, result: UploadApiResponse) => {
+        (error, result) => {
           if (error) return reject(error);
-
-          // Replace extension with .jpg and add 'so_10' (start offset 10s)
-          // Example: video.mp4 -> video.jpg with transformation
-          const thumbnailUrl = result.secure_url
-            .replace(/\.[^/.]+$/, '.jpg') 
-            .replace('/upload/', '/upload/so_10,w_400,h_250,c_fill/');
-
-          resolve({
-            url: result.secure_url,
-            thumbnailUrl: thumbnailUrl,
-            duration: Math.round(result.duration),
-            publicId: result.public_id,
-          });
+          resolve(result);
         },
       );
-      
-      // Buffer send karna zaroori hai kyunke hum disk storage use nahi kar rahe
-      upload.end(file.buffer);
+
+      uploadStream.end(file.buffer);
     });
   }
 }

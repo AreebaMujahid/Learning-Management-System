@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Role } from 'src/utils/enums/roles';
 
-@Schema({ timestamps: true }) 
+@Schema({ timestamps: true })
 export class User extends Document {
   @Prop({ required: true, trim: true })
   name: string;
@@ -13,10 +13,10 @@ export class User extends Document {
   @Prop({ required: true, select: false }) // 'select: false' protects password from accidental leaks in GET requests
   password: string;
 
-  @Prop({ 
-    type: String, 
-    enum: Role, 
-    default: Role.LEARNER 
+  @Prop({
+    type: String,
+    enum: Role,
+    default: Role.LEARNER,
   })
   role: Role;
 

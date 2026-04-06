@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
-    ConfigModule, 
+    ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -20,6 +20,6 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   providers: [JwtAuthService, CloudinaryProvider, CloudinaryService],
-  exports: [JwtAuthService, CloudinaryProvider, CloudinaryService], 
+  exports: [JwtAuthService, CloudinaryProvider, CloudinaryService],
 })
 export class SharedModule {}

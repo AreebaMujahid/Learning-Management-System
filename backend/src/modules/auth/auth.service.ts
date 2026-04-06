@@ -1,4 +1,10 @@
-import { Injectable, ConflictException, InternalServerErrorException, BadRequestException , UnauthorizedException} from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  InternalServerErrorException,
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
@@ -11,9 +17,11 @@ import { LoginUserDto } from './dto/input/login.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>,
-  private jwtAuthService: JwtAuthService,
-  private config: ConfigService,) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private jwtAuthService: JwtAuthService,
+    private config: ConfigService,
+  ) {}
 
   private generateAuthTokens(user: User) {
     //Create payload from user object first
@@ -37,10 +45,10 @@ export class AuthService {
     );
     return { accessToken, refreshToken };
   }
-  async create(createUserDto: CreateUserDto){
+  async create(createUserDto: CreateUserDto) {
     try {
       const email = createUserDto.email.trim().toLowerCase();
-      const existingUser = await this.userModel.findOne({ email: email});
+      const existingUser = await this.userModel.findOne({ email: email });
       if (existingUser) {
         throw new ConflictException('Email already exists');
       }
@@ -54,7 +62,7 @@ export class AuthService {
       const tokens = this.generateAuthTokens(savedUser);
       return tokens;
     } catch (error) {
-      throw(error)
+      throw error;
     }
   }
   async login(loginDto: LoginUserDto) {
