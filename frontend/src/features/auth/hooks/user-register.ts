@@ -6,11 +6,14 @@ import { AxiosError } from "axios";
 export const useRegister = () => {
   return useMutation<AuthResponse, AxiosError<{ message: string }>, RegisterPayload>({
     mutationFn: registerUser,
-    
     onSuccess: (data) => {
-      console.log("Registered Successfully. Tokens:", data);
+      if (data?.accessToken) {
+        localStorage.setItem("accessToken", data.accessToken);
+        console.log("Token successfully saved in LocalStorage.");
+      }
+      console.log("accessToken.", data.accessToken);
+      console.log("Registered Successfully and Token Saved.", data);
     },
-    
     onError: (error) => {
       const message = error.response?.data?.message || "Something went wrong";
       alert(message);

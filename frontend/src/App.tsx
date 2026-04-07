@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { LoginPage } from "./components/forms/LoginForm";
 import { Signup2 } from "./components/forms/SignupForm";
-import AddCourseDashboard from "./pages/dashboard";
+import AddCourseDashboard from "./pages/addCourse";
 import CoursesList from "./pages/courses";
 import CourseDetail from "./pages/courseDetail";
 import Enrollment from "./pages/enrollment";

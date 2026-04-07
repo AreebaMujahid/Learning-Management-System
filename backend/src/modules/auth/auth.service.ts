@@ -15,6 +15,9 @@ import { JwtAuthService } from 'src/shared/jwt/jwt.service';
 import { ConfigService } from '@nestjs/config';
 import { JwtTokenPurpose } from 'src/utils/enums/jwt-token-purpose';
 import { LoginUserDto } from './dto/input/login.dto';
+import { RefreshTokenDto } from './dto/input/refresh-token.dto';
+import * as express from 'express';
+import { response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -53,7 +56,7 @@ export class AuthService {
     console.log("Generated refresh token:", refreshToken);
     return { accessToken, refreshToken };
   }
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto, response: express.Response) {
     try {
       const email = createUserDto.email.trim().toLowerCase();
       const existingUser = await this.userModel.findOne({ email: email });
@@ -68,12 +71,18 @@ export class AuthService {
       });
       const savedUser = await user.save();
       const tokens = this.generateAuthTokens(savedUser);
+      response.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true, 
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
       return tokens;
     } catch (error) {
       throw error;
     }
   }
-  async login(loginDto: LoginUserDto) {
+  async login(loginDto: LoginUserDto, response: express.Response) {
     const email = loginDto.email.trim().toLowerCase();
     const password = loginDto.password;
     const user = await this.userModel.findOne({ email }).select('+password');
@@ -88,7 +97,13 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
     const tokens = this.generateAuthTokens(user);
-    return tokens;
+    response.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true, 
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    return tokens.accessToken;
   }
   async findById(id: string) {
     const user = await this.userModel.findById(id)
@@ -99,5 +114,30 @@ export class AuthService {
       throw new NotFoundException('User not found');
     }
     return user;
+  }
+  async refreshAccessToken(dto: RefreshTokenDto) {
+    try {
+      const payload = this.jwtAuthService.verifyToken(dto.refreshToken,
+        this.config.getOrThrow<string>('JWT_REFRESH_SECRET')
+      );
+      const user = await this.userModel.findById(payload.userId).exec();
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+      const tokens = await this.generateAuthTokens(user);
+
+      return {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
   }
 }

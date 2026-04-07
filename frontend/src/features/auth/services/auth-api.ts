@@ -1,5 +1,4 @@
-import api from "../../../configs/axios";
-
+import { publicApi as api } from "../../../configs/axios";
 export interface RegisterPayload {
   name: string;
   email: string;
@@ -8,13 +7,18 @@ export interface RegisterPayload {
 }
 export interface AuthResponse {
   accessToken: string;
-  refreshToken: string;
+}
+export interface BackendWrapper {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: AuthResponse;
 }
 /**
  * Register a new user
  * @POST /auth/register
  */
 export const registerUser = async (userData: RegisterPayload) => {
-  const response = await api.post("/auth/register", userData);
-  return response.data;
+  const response = await api.post<BackendWrapper>("/auth/register", userData);
+  return response.data.data;
 };

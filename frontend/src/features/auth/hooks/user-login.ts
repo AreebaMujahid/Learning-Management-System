@@ -8,7 +8,10 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: (credentials: LoginPayload) => loginUser(credentials),
     onSuccess: (data: AuthResponse) => {
-      localStorage.setItem("token", data.accessToken);
+      if (data?.accessToken) {
+        localStorage.setItem("accessToken", data.accessToken);
+        console.log("Token successfully saved in LocalStorage.");
+      }
       console.log("Login Successful:", data);
     },
     onError: (error: any) => {
