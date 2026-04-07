@@ -26,11 +26,11 @@ export class JwtAuthService {
     const audience = this.config.getOrThrow<string>('JWT_AUDIENCE');
     return {
       id: crypto.randomUUID(),
-      userId: parseInt(user._id.toString(), 10),
+      userId: user._id.toString(),
       name: user.name,
       email: user.email,
       purpose: purpose,
-      role: Role.LEARNER,
+      role: user.role as Role,
       issuer: issuer,
       audience: audience,
     };

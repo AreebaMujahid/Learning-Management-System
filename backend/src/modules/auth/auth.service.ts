@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
   BadRequestException,
   UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -31,18 +32,25 @@ export class AuthService {
     );
     const expiry = this.config.getOrThrow<string>('JWT_ACCESS_EXPIRY');
     const secret = this.config.getOrThrow<string>('JWT_ACCESS_SECRET');
+    console.log("Generating token with payload:", payload);
+    console.log("Using secret:", secret);
+    console.log("Token expiry:", expiry);
     const accessToken = this.jwtAuthService.generateToken(
       payload,
       secret,
       expiry,
     );
+    console.log("Generated access token:", accessToken);
     const refreshExpiry = this.config.getOrThrow<string>('JWT_REFRESH_EXPIRY');
+    console.log("Refresh token expiry:", refreshExpiry);
     const refreshSecret = this.config.getOrThrow<string>('JWT_REFRESH_SECRET');
+    console.log("Refresh token secret:", refreshSecret);
     const refreshToken = this.jwtAuthService.generateToken(
       payload,
       refreshSecret,
       refreshExpiry,
     );
+    console.log("Generated refresh token:", refreshToken);
     return { accessToken, refreshToken };
   }
   async create(createUserDto: CreateUserDto) {
@@ -81,5 +89,15 @@ export class AuthService {
     }
     const tokens = this.generateAuthTokens(user);
     return tokens;
+  }
+  async findById(id: string) {
+    const user = await this.userModel.findById(id)
+      .select('-password') // Exclude sensitive data
+      .exec();
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
   }
 }
