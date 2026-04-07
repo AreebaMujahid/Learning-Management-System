@@ -29,7 +29,7 @@ export class CreateCourseDto {
   @Type(() => Number)
   price: number;
 
-  @IsMongoId({ message: 'Invalid Mentor ID format' })
+  //@IsMongoId({ message: 'Invalid Mentor ID format' })
   @IsNotEmpty()
   mentor: string;
 }

@@ -15,12 +15,6 @@ import {
 } from "../ui/select";
 interface Signup2Props {
   heading?: string;
-  logo?: {
-    url: string;
-    src: string;
-    alt: string;
-    title?: string;
-  };
   buttonText?: string;
   googleText?: string;
   signupText?: string;
@@ -30,12 +24,6 @@ interface Signup2Props {
 
 const Signup2 = ({
   heading = "Signup",
-  logo = {
-    url: "https://www.shadcnblocks.com",
-    src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-wordmark.svg",
-    alt: "logo",
-    title: "LMS",
-  },
   buttonText = "Create Account",
   signupText = "Already a user?",
   signupUrl = "https://shadcnblocks.com",
@@ -83,16 +71,6 @@ const Signup2 = ({
       )}
     >
       <div className="flex w-full max-w-sm flex-col items-center gap-6">
-        {/* Logo Section */}
-        <a href={logo.url} className="mb-2">
-          <img
-            src={logo.src}
-            alt={logo.alt}
-            title={logo.title}
-            className="h-10 dark:invert"
-          />
-        </a>
-
         {/* Form Card */}
         <div className="w-full rounded-lg border border-border bg-background p-8 shadow-lg">
           <div className="mb-6 flex flex-col items-center gap-y-2">

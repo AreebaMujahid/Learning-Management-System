@@ -14,36 +14,34 @@ export class CoursesService {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  async createCourse(
-    createCourseDto: CreateCourseDto,
-    file: Express.Multer.File,
-  ) {
-    try {
-      const result: any = await this.cloudinaryService.uploadVideo(file);
-      const videoUrl = result.secure_url;
-      const thumbnailUrl = result.eager[0].secure_url;
-      const duration = Math.round(result.duration);
-      const newVideo = new this.videoModel({
-        title: createCourseDto.title + ' - Intro',
-        videoUrl: videoUrl,
-        thumbnailUrl: thumbnailUrl,
-        duration: duration,
-      });
-      const savedVideo = await newVideo.save();
-      const newCourse = new this.courseModel({
-        ...createCourseDto,
-        videos: [savedVideo._id],
-        mentor: createCourseDto.mentor,
-        thumbnail: thumbnailUrl,
-      });
-      const savedCourse = await newCourse.save();
-      savedVideo.courseId = savedCourse._id as any;
-      await savedVideo.save();
-      return savedCourse;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'Failed to create course: ' + error.message,
-      );
-    }
+  async createCourse(createCourseDto: CreateCourseDto, file: Express.Multer.File) {
+  try {
+    const result: any = await this.cloudinaryService.uploadVideo(file);
+    const videoUrl = result.secure_url;
+    const thumbnailUrl = result.eager[0].secure_url;
+    const duration = Math.round(result.duration);
+    const newCourse = new this.courseModel({
+      ...createCourseDto,
+      thumbnail: thumbnailUrl,
+      videos: [],
+    });
+    const savedCourse = await newCourse.save();
+    const newVideo = new this.videoModel({
+      title: createCourseDto.title + ' - Intro',
+      videoUrl: videoUrl,
+      thumbnailUrl: thumbnailUrl,
+      duration: duration,
+      courseId: savedCourse._id,
+    });
+    const savedVideo = await newVideo.save();
+    savedCourse.videos.push(savedVideo._id as any);
+    await savedCourse.save();
+
+    return savedCourse;
+  } catch (error) {
+    throw new InternalServerErrorException(
+      'Failed to create course: ' + error.message,
+    );
   }
+}
 }

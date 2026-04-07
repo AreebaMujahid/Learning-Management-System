@@ -6,18 +6,41 @@ import {
   UploadedFile,
   BadRequestException,
 } from '@nestjs/common';
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/input/create-course.dto';
+
+@ApiTags('Courses')
 @Controller('courses')
 export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
   @Post('add')
+  @ApiOperation({ summary: 'Create a new course with an intro video' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['video', 'title', 'mentor'],
+      properties: {
+        video: {
+          type: 'string',
+          format: 'binary',
+        },
+        title: { type: 'string', example: 'Advanced NestJS Masterclass' },
+        description: { type: 'string', example: 'Learn backend scaling' },
+        price: { type: 'number', example: 49.99 },
+        mentor: { type: 'string', example: 'Areeba Mujahid' },
+        category: { type: 'string', example: 'Development' },
+      },
+    },
+  })
   @UseInterceptors(FileInterceptor('video'))
   async addCourse(
-    @UploadedFile() file: Express.Multer.File,
     @Body() createCourseDto: CreateCourseDto,
+    @UploadedFile() file: Express.Multer.File,
+    
   ) {
     return await this.coursesService.createCourse(createCourseDto, file);
   }
