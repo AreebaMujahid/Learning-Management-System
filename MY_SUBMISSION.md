@@ -46,3 +46,10 @@ A high-performance, full-stack Learning Management System (LMS) built with the *
 ### 1. Clone the Repository
 ```bash
 git clone <your-repo-url>
+```bash
+
+### 2. Clone the Repository
+```bash
+git clone <your-repo-url>
+```bash
+
