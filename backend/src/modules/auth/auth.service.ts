@@ -35,25 +35,25 @@ export class AuthService {
     );
     const expiry = this.config.getOrThrow<string>('JWT_ACCESS_EXPIRY');
     const secret = this.config.getOrThrow<string>('JWT_ACCESS_SECRET');
-    console.log("Generating token with payload:", payload);
-    console.log("Using secret:", secret);
-    console.log("Token expiry:", expiry);
+    console.log('Generating token with payload:', payload);
+    console.log('Using secret:', secret);
+    console.log('Token expiry:', expiry);
     const accessToken = this.jwtAuthService.generateToken(
       payload,
       secret,
       expiry,
     );
-    console.log("Generated access token:", accessToken);
+    console.log('Generated access token:', accessToken);
     const refreshExpiry = this.config.getOrThrow<string>('JWT_REFRESH_EXPIRY');
-    console.log("Refresh token expiry:", refreshExpiry);
+    console.log('Refresh token expiry:', refreshExpiry);
     const refreshSecret = this.config.getOrThrow<string>('JWT_REFRESH_SECRET');
-    console.log("Refresh token secret:", refreshSecret);
+    console.log('Refresh token secret:', refreshSecret);
     const refreshToken = this.jwtAuthService.generateToken(
       payload,
       refreshSecret,
       refreshExpiry,
     );
-    console.log("Generated refresh token:", refreshToken);
+    console.log('Generated refresh token:', refreshToken);
     return { accessToken, refreshToken };
   }
   async create(createUserDto: CreateUserDto, response: express.Response) {
@@ -72,10 +72,10 @@ export class AuthService {
       const savedUser = await user.save();
       const tokens = this.generateAuthTokens(savedUser);
       response.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: true, 
-      secure: true,
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       return tokens;
     } catch (error) {
@@ -98,15 +98,16 @@ export class AuthService {
     }
     const tokens = this.generateAuthTokens(user);
     response.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: true, 
+      httpOnly: true,
       secure: true,
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    return tokens.accessToken;
+    return { accessToken: tokens.accessToken };
   }
   async findById(id: string) {
-    const user = await this.userModel.findById(id)
+    const user = await this.userModel
+      .findById(id)
       .select('-password') // Exclude sensitive data
       .exec();
 
@@ -117,8 +118,9 @@ export class AuthService {
   }
   async refreshAccessToken(dto: RefreshTokenDto) {
     try {
-      const payload = this.jwtAuthService.verifyToken(dto.refreshToken,
-        this.config.getOrThrow<string>('JWT_REFRESH_SECRET')
+      const payload = this.jwtAuthService.verifyToken(
+        dto.refreshToken,
+        this.config.getOrThrow<string>('JWT_REFRESH_SECRET'),
       );
       const user = await this.userModel.findById(payload.userId).exec();
       if (!user) {

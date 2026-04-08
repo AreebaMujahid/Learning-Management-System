@@ -18,12 +18,6 @@ export const getUserIdFromToken = (): string | null => {
   try {
     const decoded = jwtDecode<DecodedToken>(token);
     console.log("Decoded Token:", decoded);
-    const currentTime = Date.now() / 1000;
-    if (decoded.exp < currentTime) {
-      console.warn("Token expired");
-      return null;
-    }
-
     return decoded.userId; 
   } catch (error) {
     console.error("Invalid token:", error);

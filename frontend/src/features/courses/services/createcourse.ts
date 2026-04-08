@@ -5,6 +5,7 @@ export interface CreateCourseInput {
   category: string;
   price: number;
   video: File;
+  mentor: string;
 }
 
 export const createCourse = async (data: CreateCourseInput) => {
@@ -13,8 +14,8 @@ export const createCourse = async (data: CreateCourseInput) => {
   formData.append('description', data.description);
   formData.append('category', data.category);
   formData.append('price', data.price.toString());
+  formData.append('mentor', data.mentor);
   formData.append('video', data.video);
-
   const response = await apiClient.post('/courses/add', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',

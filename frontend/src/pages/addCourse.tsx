@@ -7,8 +7,8 @@ import {
   User,
   DollarSign,
 } from "lucide-react";
-import type { CreateCourseInput } from "../features/auth/services/createcourse";
-import { useAddCourse } from "../features/auth/hooks/add-course";
+import type { CreateCourseInput } from "../features/courses/services/createcourse";
+import { useAddCourse } from "../features/courses/hooks/add-course";
 import { useRef, useState } from "react";
 import { CourseCategory } from "../enums/course-category";
 const AddCourseDashboard = () => {

@@ -14,10 +14,6 @@ export interface BackendWrapper {
   message: string;
   data: AuthResponse;
 }
-/**
- * Register a new user
- * @POST /auth/register
- */
 export const registerUser = async (userData: RegisterPayload) => {
   const response = await api.post<BackendWrapper>("/auth/register", userData);
   return response.data.data;
