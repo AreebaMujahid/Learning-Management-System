@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import { registerUser } from "../services/auth-api";
-import type { RegisterPayload, AuthResponse } from "../services/auth-api";
+import { registerUser } from "../services/signup-api";
+import type { RegisterPayload, AuthResponse } from "../services/signup-api";
 import { AxiosError } from "axios";
 
 export const useRegister = () => {

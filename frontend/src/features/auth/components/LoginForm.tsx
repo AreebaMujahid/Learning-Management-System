@@ -1,11 +1,11 @@
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { cn } from "../../lib/utils";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
+import { cn } from "../../../lib/utils";
 import { GraduationCap } from "lucide-react"; // Hero icon for LMS
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { useLogin } from "../../features/auth/hooks/user-login";
+import { useLogin } from "../hooks/user-login";
 export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

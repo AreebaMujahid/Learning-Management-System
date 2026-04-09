@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { loginUser} from "../services/login-api";
-import type {AuthResponse } from "../services/auth-api";
+import type {AuthResponse } from "../services/signup-api";
 import type { LoginPayload } from "../services/login-api";
 import { useNavigate } from "react-router-dom";
 
