@@ -1,18 +1,24 @@
-import { Button } from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
-import { cn } from "../../../lib/utils";
 import { GraduationCap } from "lucide-react"; // Hero icon for LMS
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { loginSchema, type loginValues } from "../schemas/login.schema";
 import { useLogin } from "../hooks/user-login";
+import { toast } from "sonner";
+import { AuthForm } from "../../../components/forms/AuthForm";
+import { InputField } from "../../../components/forms/InputField";
 export function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { mutate: login, isPending } = useLogin();
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    login({ email, password });
+  const { mutate, isPending } = useLogin();
+  const handleLogin = (data: loginValues, methods: any) => {
+    (mutate(data),
+      {
+        onSuccess: () => {
+          toast.success("Login successfully!");
+          methods.reset();
+        },
+        onError: (error: any) => {
+          const errorMessage = error.response?.data?.message || "Login failed!";
+          toast.error(errorMessage);
+        },
+      });
   };
   return (
     <div className="container relative min-h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
@@ -48,47 +54,29 @@ export function LoginPage() {
             </p>
           </div>
 
-          {/* Form Elements */}
-          <div className={cn("grid gap-6")}>
-            <form onSubmit={handleSubmit}>
-              <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="name@example.com"
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Password</Label>
-                    <a
-                      href="#"
-                      className="text-xs text-primary hover:underline"
-                    >
-                      Forgot password?
-                    </a>
-                  </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    required
-                  />
-                </div>
-                <Button className="mt-2" type="submit" disabled={isPending}>
-                  {isPending ? "Logging in..." : "Sign In"}
-                </Button>
-              </div>
-            </form>
-          </div>
+          <AuthForm
+            schema={loginSchema}
+            defaultValues={{
+              email: "",
+              password: "",
+            }}
+            buttonText="Login"
+            onSubmit={handleLogin}
+            isPending={isPending}
+          >
+            <InputField
+              name="email"
+              label="Email"
+              placeholder="joh@gmail.com"
+            />
 
+            <InputField
+              name="password"
+              label="Password"
+              type="password"
+              placeholder="••••••••"
+            />
+          </AuthForm>
           {/* Footer Text */}
           <p className="px-8 text-center text-sm text-muted-foreground">
             Dont have an account?

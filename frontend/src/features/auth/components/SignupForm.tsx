@@ -24,7 +24,6 @@ const Signup = ({
     const { confirmPassword, ...signupData } = data;
     mutate(signupData, {
       onSuccess: () => {
-        // Professional approach: Success notification + Clear form
         toast.success("Account created successfully!");
         methods.reset();
       },
