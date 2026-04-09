@@ -8,6 +8,8 @@ import {
   Search,
   Filter,
 } from "lucide-react";
+import { Button } from "../components/ui/button";
+import { Link } from "react-router-dom";
 
 const CoursesList = () => {
   // Dummy Data for Preview
@@ -70,9 +72,17 @@ const CoursesList = () => {
               Manage and monitor your course performance.
             </p>
           </div>
-          <button className="flex items-center justify-center space-x-2 bg-brand-10 hover:opacity-90 text-white px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-100 font-medium">
-            <Plus size={18} /> <span>Add New Course</span>
-          </button>
+          <Button
+            asChild
+            variant="default"
+            size="lg"
+            className="bg-indigo-600 hover:bg-indigo-700"
+          >
+            <Link to="/add-course">
+              <Plus size={18} />
+              <span>Add New Course</span>
+            </Link>
+          </Button>
         </div>
 
         {/* Search & Filter Bar */}

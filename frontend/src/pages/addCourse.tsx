@@ -58,24 +58,6 @@ const AddCourseDashboard = () => {
   };
   return (
     <div className="min-h-screen bg-slate-50 flex">
-      {/* Sidebar - Navigation */}
-      <aside className="w-64 bg-white border-r border-slate-200 p-6 hidden md:block">
-        <div className="text-2xl font-bold text-indigo-600 mb-10">
-          LMS Admin
-        </div>
-        <nav className="space-y-4">
-          <div className="flex items-center space-x-3 text-slate-600 p-2 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg cursor-pointer">
-            <Layout size={20} /> <span>Dashboard</span>
-          </div>
-          <div className="flex items-center space-x-3 text-indigo-600 bg-indigo-50 p-2 rounded-lg font-medium">
-            <BookOpen size={20} /> <span>Courses</span>
-          </div>
-          <div className="flex items-center space-x-3 text-slate-600 p-2 hover:bg-indigo-50 rounded-lg cursor-pointer">
-            <User size={20} /> <span>Mentors</span>
-          </div>
-        </nav>
-      </aside>
-
       {/* Main Content Area */}
       <main className="flex-1 p-8">
         <div className="max-w-4xl mx-auto">

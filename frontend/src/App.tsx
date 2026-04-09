@@ -6,6 +6,7 @@ import CoursesList from "./pages/courses";
 import CourseDetail from "./pages/courseDetail";
 import Enrollment from "./pages/enrollment";
 import { Toaster } from "sonner";
+import { DashboardLayout } from "./components/layouts/DashboardLayout";
 function App() {
   return (
     <Router>
@@ -14,10 +15,12 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/" element={<LoginPage />} />
-        <Route path="/add-course" element={<AddCourseDashboard />} />
-        <Route path="/courses" element={<CoursesList />} />
-        <Route path="/course" element={<CourseDetail />} />
-        <Route path="/enrollment" element={<Enrollment />} />
+        <Route element={<DashboardLayout />}>
+          <Route path="/add-course" element={<AddCourseDashboard />} />
+          <Route path="/courses" element={<CoursesList />} />
+          <Route path="/course" element={<CourseDetail />} />
+          <Route path="/enrollment" element={<Enrollment />} />
+        </Route>
       </Routes>
     </Router>
   );
