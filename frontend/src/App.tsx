@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { LoginPage } from "./features/auth/components/LoginForm";
-import { Signup } from "./features/auth/components/SignupForm";
+import { LoginPage } from "./features/auth/forms/LoginForm";
+import { Signup } from "./features/auth/forms/SignupForm";
 import AddCourseDashboard from "./pages/addCourse";
 import CoursesList from "./pages/courses";
 import CourseDetail from "./pages/courseDetail";

@@ -52,17 +52,20 @@ export class AuthController {
   }
 
   @Post('refresh-token')
-  async refreshAccessToken(@Req() req: Express.Request, @Res({ passthrough: true }) res: Express.Response) {
-  const token = req.cookies['refreshToken'];
-  if (!token) throw new UnauthorizedException();
-  const result = await this.authService.refreshAccessToken(token);
-  res.cookie('refreshToken', result.refreshToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'strict',
-  });
-  return { accessToken: result.accessToken, user: result.user };
-  } 
+  async refreshAccessToken(
+    @Req() req: Express.Request,
+    @Res({ passthrough: true }) res: Express.Response,
+  ) {
+    const token = req.cookies['refreshToken'];
+    if (!token) throw new UnauthorizedException();
+    const result = await this.authService.refreshAccessToken(token);
+    res.cookie('refreshToken', result.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+    return { accessToken: result.accessToken, user: result.user };
+  }
 
   @Post('logout')
   logout(@Res({ passthrough: true }) response: express.Response) {

@@ -64,6 +64,7 @@ apiClient.interceptors.response.use(
           .post('http://localhost:3000/api/v1/auth/refresh-token', {}, { withCredentials: true })
           .then(({ data }) => {
             const { accessToken } = data;
+            console.log("I am calling refresh token api call in the background to get new access token")
             // save new token
             localStorage.setItem('accessToken', accessToken);
             // Global header update karein

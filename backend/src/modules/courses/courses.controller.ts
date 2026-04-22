@@ -13,6 +13,7 @@ import { CreateCourseDto } from './dto/input/create-course.dto';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/shared/guards/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { FilterCourseDto } from 'src/modules/courses/dto/input/get-courses.dto';
 
 @ApiTags('Courses')
 @Controller('courses')
@@ -47,5 +48,14 @@ export class CoursesController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     return await this.coursesService.createCourse(createCourseDto, file);
+  }
+
+  //filters: course name , category, mentor name, price range
+  @UseGuards(JwtAuthGuard)
+  @Post('courses')
+  @ApiOperation({ summary: 'View all courses with filters and paginatio' })
+  @ApiBearerAuth('JWT-auth')
+  async getCourses(@Body() filterCourseDto: FilterCourseDto) {
+    return await this.coursesService.getAllCourses(filterCourseDto);
   }
 }
