@@ -28,8 +28,4 @@ export class CreateCourseDto {
   @Min(0, { message: 'Price cannot be negative' })
   @Type(() => Number)
   price: number;
-
-  //@IsMongoId({ message: 'Invalid Mentor ID format' })
-  @IsNotEmpty()
-  mentor: string;
 }

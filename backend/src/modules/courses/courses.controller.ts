@@ -14,6 +14,8 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/shared/guards/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { FilterCourseDto } from 'src/modules/courses/dto/input/get-courses.dto';
+import { CurrentUser } from 'src/utils/decorators/user.decorator';
+import { type  JwtTokenPayload } from 'src/utils/types/token.payload';
 
 @ApiTags('Courses')
 @Controller('courses')
@@ -28,7 +30,7 @@ export class CoursesController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['video', 'title', 'mentor'],
+      required: ['video', 'title'],
       properties: {
         video: {
           type: 'string',
@@ -37,7 +39,6 @@ export class CoursesController {
         title: { type: 'string', example: 'Advanced NestJS Masterclass' },
         description: { type: 'string', example: 'Learn backend scaling' },
         price: { type: 'number', example: 49.99 },
-        mentor: { type: 'string', example: '6778678...' },
         category: { type: 'string', example: 'Development' },
       },
     },
@@ -46,14 +47,16 @@ export class CoursesController {
   async addCourse(
     @Body() createCourseDto: CreateCourseDto,
     @UploadedFile() file: Express.Multer.File,
+    @CurrentUser()
+    user: JwtTokenPayload,
   ) {
-    return await this.coursesService.createCourse(createCourseDto, file);
+    return await this.coursesService.createCourse(createCourseDto, file, user);
   }
 
   //filters: course name , category, mentor name, price range
   @UseGuards(JwtAuthGuard)
   @Post('courses')
-  @ApiOperation({ summary: 'View all courses with filters and paginatio' })
+  @ApiOperation({ summary: 'View all courses with filters and pagination' })
   @ApiBearerAuth('JWT-auth')
   async getCourses(@Body() filterCourseDto: FilterCourseDto) {
     return await this.coursesService.getAllCourses(filterCourseDto);

@@ -9,6 +9,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { FilterCourseDto } from './dto/input/get-courses.dto';
 import { plainToInstance } from 'class-transformer';
 import { CourseResponseDto } from './dto/response/get-courses-response.dto';
+import { JwtTokenPayload } from 'src/utils/types/token.payload';
 @Injectable()
 export class CoursesService {
   constructor(
@@ -20,16 +21,24 @@ export class CoursesService {
   async createCourse(
     createCourseDto: CreateCourseDto,
     file: Express.Multer.File,
+    user: JwtTokenPayload,
   ) {
     try {
+      console.log("before video upload")
+      console.log("file is ", file);
       const result: any = await this.cloudinaryService.uploadVideo(file);
+      console.log("after video upload")
       const videoUrl = result.secure_url;
+      console.log('video url is ', videoUrl);
       const thumbnailUrl = result.eager[0].secure_url;
+      console.log('thumbnail url is ', thumbnailUrl);
       const duration = Math.round(result.duration);
-      const { mentor, ...rest } = createCourseDto;
+      const {...rest } = createCourseDto;
+      console.log('user in backend is ', user);
+      const mentorId = user.userId;
       const newCourse = new this.courseModel({
         ...createCourseDto,
-        mentor: new Types.ObjectId(mentor),
+        mentor: mentorId,
         thumbnail: thumbnailUrl,
         videos: [],
       });
@@ -44,7 +53,7 @@ export class CoursesService {
       const savedVideo = await newVideo.save();
       savedCourse.videos.push(savedVideo._id as any);
       await savedCourse.save();
-
+      console.log("saved course");
       return savedCourse;
     } catch (error) {
       throw new InternalServerErrorException(

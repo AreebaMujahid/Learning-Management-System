@@ -1,226 +1,159 @@
-import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Layout,
-  Upload,
-  Video,
-  BookOpen,
-  User,
-  DollarSign,
-} from "lucide-react";
-import type { CreateCourseInput } from "../features/courses/services/createcourse";
+  courseSchema,
+  type CourseFormValues,
+} from "../features/courses/schemas/addcourse.schema";
 import { useAddCourse } from "../features/courses/hooks/add-course";
-import { useRef, useState } from "react";
+import { Video, Upload } from "lucide-react";
+import { useState } from "react";
 import { CourseCategory } from "../enums/course-category";
-const AddCourseDashboard = () => {
+export const AddCourseDashboard = () => {
   const { mutate, isPending } = useAddCourse();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [courseData, setCourseData] = useState<{
-    title: string;
-    description: string;
-    category: CourseCategory;
-    price: number;
-    mentor: string;
-  }>({
-    title: "",
-    description: "",
-    category: CourseCategory.DEVELOPMENT,
-    price: 0,
-    mentor: "",
-  });
-  const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
 
-  // 2. Video Selection Handler
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<CourseFormValues>({
+    resolver: zodResolver(courseSchema),
+  });
+
+  const videoFile = watch("video");
+
+  const onSubmit = (data: CourseFormValues) => {
+    console.log("Form Data:", data);
+    mutate(data);
+  };
+
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setVideoFile(file);
+      setValue("video", file, { shouldValidate: true });
       setVideoPreview(URL.createObjectURL(file));
     }
   };
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!videoFile) {
-      alert("Please upload an intro video");
-      return;
-    }
-    const payload: CreateCourseInput = {
-      ...courseData,
-      video: videoFile,
-    };
 
-    mutate(payload, {
-      onSuccess: () => {
-        alert("Course Created Successfully!");
-        // Reset form if needed
-      },
-    });
-  };
   return (
-    <div className="min-h-screen bg-slate-50 flex">
-      {/* Main Content Area */}
-      <main className="flex-1 p-8">
-        <div className="max-w-4xl mx-auto">
-          <header className="mb-8">
-            <h1 className="text-2xl font-bold text-slate-800">
-              Add New Course
-            </h1>
-            <p className="text-slate-500 text-sm">
-              Upload your videos and fill in the course details.
-            </p>
-          </header>
+    <main className="max-w-4xl mx-auto p-8">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+      >
+        {/* Left Side: Inputs */}
+        <div className="lg:col-span-2 space-y-6">
+          <section className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+            <h2 className="text-lg font-semibold mb-4">General Information</h2>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Side: Course Details Form */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                <h2 className="text-lg font-semibold mb-4 text-slate-700">
-                  General Information
-                </h2>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 mb-1">
-                      Course Title
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={courseData.title}
-                      onChange={(e) =>
-                        setCourseData({ ...courseData, title: e.target.value })
-                      }
-                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                      placeholder="e.g. Mastering NestJS"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 mb-1">
-                      Description
-                    </label>
-                    <textarea
-                      rows={4}
-                      required
-                      value={courseData.description}
-                      onChange={(e) =>
-                        setCourseData({
-                          ...courseData,
-                          description: e.target.value,
-                        })
-                      }
-                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                      placeholder="What will students learn?"
-                    ></textarea>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-600 mb-1">
-                        Category
-                      </label>
-                      <select
-                        className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none"
-                        value={courseData.category}
-                        onChange={(e) =>
-                          setCourseData({
-                            ...courseData,
-                            category: e.target.value as CourseCategory,
-                          })
-                        }
-                      >
-                        {Object.values(CourseCategory).map((cat) => (
-                          <option key={cat} value={cat}>
-                            {cat}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-600 mb-1">
-                        Price ($)
-                      </label>
-                      <input
-                        type="number"
-                        required
-                        value={courseData.price}
-                        onChange={(e) =>
-                          setCourseData({
-                            ...courseData,
-                            price: Number(e.target.value),
-                          })
-                        }
-                        className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                <h2 className="text-lg font-semibold mb-4 text-slate-700">
-                  Video Content
-                </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Course Title</label>
                 <input
-                  type="file"
-                  hidden
-                  ref={fileInputRef}
-                  accept="video/*"
-                  onChange={handleVideoChange}
+                  {...register("title")}
+                  className={`w-full p-2.5 bg-slate-50 border rounded-lg ${errors.title ? "border-red-500" : "border-slate-200"}`}
                 />
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-indigo-200 bg-indigo-50 rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-indigo-100 transition-colors"
-                >
-                  <div className="w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center mb-3 shadow-lg">
-                    <Video size={24} />
-                  </div>
-                  <span className="text-sm font-medium text-indigo-700">
-                    {videoFile ? videoFile.name : "Upload Video"}
-                  </span>
-                  <span className="text-xs text-slate-500 mt-1">
-                    MP4 or MKV (Max 5 mins)
-                  </span>
-                </div>
-
-                {/* Auto-Thumbnail Preview Placeholder */}
-                <div className="mt-6">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    Preview
-                  </span>
-                  <div className="mt-2 aspect-video bg-slate-900 rounded-lg flex items-center justify-center text-slate-500 overflow-hidden relative group">
-                    {videoPreview ? (
-                      <video
-                        src={videoPreview}
-                        className="w-full h-full object-cover"
-                        controls
-                      />
-                    ) : (
-                      <span className="text-xs italic text-slate-400">
-                        Video preview will appear here
-                      </span>
-                    )}
-                    <div className="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center">
-                      <button className="text-white text-sm bg-indigo-600 px-4 py-1.5 rounded-full">
-                        Preview Video
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                {errors.title && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.title.message}
+                  </p>
+                )}
               </div>
 
-              <button
-                onClick={handleSubmit}
-                disabled={isPending}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-all shadow-md shadow-indigo-200"
-              >
-                {isPending ? "Uploading Course..." : "Create Course"}
-              </button>
+              <div>
+                <label className="text-sm font-medium">Description</label>
+
+                <textarea
+                  {...register("description")}
+                  rows={4}
+                  className={`w-full p-2.5 bg-slate-50 border rounded-lg ${
+                    errors.description ? "border-red-500" : "border-slate-200"
+                  }`}
+                  placeholder="Enter course description..."
+                />
+
+                {errors.description && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.description.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Category</label>
+                  <select
+                    {...register("category")}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg"
+                  >
+                    <option value="">Select Category</option>
+
+                    {Object.values(CourseCategory).map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Price ($)</label>
+                  <input
+                    type="number"
+                    {...register("price")}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg"
+                  />
+                </div>
+              </div>
             </div>
-          </div>
+          </section>
         </div>
-      </main>
-    </div>
+
+        {/* Right Side: Video Upload */}
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+            <h2 className="text-lg font-semibold mb-4">Video Content</h2>
+
+            <label className="cursor-pointer border-2 border-dashed border-indigo-200 bg-indigo-50 rounded-xl p-8 flex flex-col items-center">
+              <input
+                type="file"
+                hidden
+                accept="video/*"
+                onChange={handleVideoChange}
+              />
+              <Video className="text-indigo-600 mb-2" size={32} />
+              <span className="text-sm font-medium">
+                {videoFile ? videoFile.name : "Upload Intro Video"}
+              </span>
+            </label>
+            {errors.video && (
+              <p className="text-red-500 text-xs mt-2 text-center">
+                {errors.video.message as string}
+              </p>
+            )}
+
+            {/* Preview Section */}
+            {videoPreview && (
+              <div className="mt-4 aspect-video rounded-lg overflow-hidden border">
+                <video
+                  src={videoPreview}
+                  controls
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={isPending}
+            className="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 disabled:opacity-50"
+          >
+            {isPending ? "Processing..." : "Create Course"}
+          </button>
+        </div>
+      </form>
+    </main>
   );
 };
-
-export default AddCourseDashboard;

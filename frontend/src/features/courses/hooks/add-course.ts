@@ -1,30 +1,24 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createCourse } from '../services/createcourse';
-import toast from 'react-hot-toast'; 
+import { toast } from "sonner";
 import type  { CreateCourseInput } from '../services/createcourse';
-import { getUserIdFromToken } from '../../../utils/token.decode';
+import {courseSchema, type CourseFormValues } from '../schemas/addcourse.schema';
 
 export const useAddCourse = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateCourseInput) => {
-      const mentorId = getUserIdFromToken();
-      console.log("Mentor ID from token:", mentorId);
-      if (!mentorId) {
-        throw new Error("User session expired. Please login again.");
-      }
-      const finalPayload = {
-        ...data,
-        mentor: mentorId,
-      };
-      return createCourse(finalPayload);
+    mutationFn: (data: CourseFormValues) => {
+      const parsedData = courseSchema.parse(data);
+
+  return createCourse(parsedData);
     },
     onMutate: () => {
       toast.loading('Uploading course and processing video...', { id: 'course-upload' });
     },
     onSuccess: () => {
+      console.log("SUCCESS HIT");
       queryClient.invalidateQueries({ queryKey: ['courses'] });
-      toast.success('Course created successfully!', { id: 'course-upload' });
+      toast.success('Course Added successfully!', { id: 'course-upload' });
     },
     onError: (error: any) => {
       const message = error.response?.data?.message;
